@@ -31,7 +31,7 @@ func initRegexp() error {
 
 func checkArgs() error {
 	if len(os.Args) != argsLen {
-		return fmt.Errorf("Usage: ./benchcompare.exe [old.txt] [new.txt]")
+		return fmt.Errorf("Usage: benchcompare [old.txt] [new.txt]")
 	}
 
 	return nil
