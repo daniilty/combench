@@ -101,25 +101,8 @@ func compareResults(old string, new string) error {
 		return err
 	}
 
-	tOpsDiff := parsedNewSlice[0] / parsedOldSlice[0] * hundredPercent
-	nsPerOpsDiff := parsedNewSlice[1] / parsedOldSlice[1] * hundredPercent
-
-	var formattedTOpsDiff, formattedNsPerOpsDiff string
-	if tOpsDiff < hundredPercent {
-		tOpsDiff = hundredPercent - tOpsDiff
-		formattedTOpsDiff = fmt.Sprintf("-%f %%", tOpsDiff)
-	} else {
-		tOpsDiff = tOpsDiff - hundredPercent
-		formattedTOpsDiff = fmt.Sprintf("+%f %%", tOpsDiff)
-	}
-
-	if nsPerOpsDiff < hundredPercent {
-		nsPerOpsDiff = hundredPercent - nsPerOpsDiff
-		formattedTOpsDiff = fmt.Sprintf("-%f %%", nsPerOpsDiff)
-	} else {
-		nsPerOpsDiff = nsPerOpsDiff - hundredPercent
-		formattedNsPerOpsDiff = fmt.Sprintf("+%f %%", nsPerOpsDiff)
-	}
+	formattedTOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 0)
+	formattedNsPerOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 0)
 
 	fmt.Printf("Difference in Total operations: new results(%s) are differ from old (%s) on %s\n", newSlice[1], oldSlice[1], formattedTOpsDiff)
 	fmt.Printf("Difference in ns per operation: new results(%s) are differ from old (%s) on %s\n", newSlice[2], oldSlice[2], formattedNsPerOpsDiff)
@@ -127,10 +110,25 @@ func compareResults(old string, new string) error {
 	return nil
 }
 
+func getParsedDiff(firstSlice []float64, secondSlice []float64, pos int) string {
+	diff := firstSlice[pos] / secondSlice[pos] * hundredPercent
+
+	var formattedDiff string
+	if diff < hundredPercent {
+		diff = hundredPercent - diff
+		formattedDiff = fmt.Sprintf("-%f %%", diff)
+	} else {
+		diff = diff - hundredPercent
+		formattedDiff = fmt.Sprintf("+%f %%", diff)
+	}
+
+	return formattedDiff
+}
+
 func getParsedSlices(firstSlice []string, secondSlice []string) ([]float64, []float64, error) {
 	var fs, ss []float64
-	for i := 1; i < len(firstSlice); i++ {
-		f, err := strconv.ParseFloat(firstSlice[i], 64)
+	for _, e := range firstSlice {
+		f, err := strconv.ParseFloat(e, 64)
 		if err != nil {
 			return []float64{}, []float64{}, err
 		}
@@ -138,8 +136,8 @@ func getParsedSlices(firstSlice []string, secondSlice []string) ([]float64, []fl
 		fs = append(fs, f)
 	}
 
-	for i := 1; i < len(secondSlice); i++ {
-		s, err := strconv.ParseFloat(secondSlice[i], 64)
+	for _, e := range secondSlice {
+		s, err := strconv.ParseFloat(e, 64)
 		if err != nil {
 			return []float64{}, []float64{}, err
 		}
