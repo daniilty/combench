@@ -1,4 +1,4 @@
-package github.com/daniilty/combench
+package main
 
 import (
 	"fmt"
