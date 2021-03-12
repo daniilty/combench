@@ -104,8 +104,6 @@ func compareResults(old string, new string) error {
 	formattedTOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 1)
 	formattedNsPerOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 2)
 
-	fmt.Println(parsedNewSlice)
-
 	fmt.Printf("Difference in Total operations: new results(%s) are differ from old (%s) on %s\n", newSlice[1], oldSlice[1], formattedTOpsDiff)
 	fmt.Printf("Difference in ns per operation: new results(%s) are differ from old (%s) on %s\n", newSlice[2], oldSlice[2], formattedNsPerOpsDiff)
 
