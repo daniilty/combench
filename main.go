@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	argsLen  = 3
-	exitCode = 1
+	argsLen        = 3
+	exitCode       = 1
+	hundredPercent = 100.0
 )
 
 var (
-	reNum          *regexp.Regexp
-	hundredPercent = 100.0
+	reNum *regexp.Regexp
 )
 
 func initRegexp() error {
@@ -104,13 +104,25 @@ func compareResults(old string, new string) error {
 	formattedTOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 1)
 	formattedNsPerOpsDiff := getParsedDiff(parsedNewSlice, parsedOldSlice, 2)
 
-	fmt.Printf("Difference in Total operations: new results(%s) are differ from old (%s) on %s\n", newSlice[1], oldSlice[1], formattedTOpsDiff)
-	fmt.Printf("Difference in ns per operation: new results(%s) are differ from old (%s) on %s\n", newSlice[2], oldSlice[2], formattedNsPerOpsDiff)
+	printFormattedDiff(newSlice[1], oldSlice[1], formattedTOpsDiff)
+	printFormattedDiff(newSlice[2], oldSlice[3], formattedNsPerOpsDiff)
 
 	return nil
 }
 
+func printFormattedDiff(firParam string, secParam string, diff string) {
+	fmt.Printf("Difference in Total operations: new results(%s) are differ from old (%s) on %s\n", firParam, secParam, diff)
+}
+
 func getParsedDiff(firstSlice []float64, secondSlice []float64, pos int) string {
+	if len(firstSlice)-1 < pos && len(secondSlice)-1 < pos {
+		return "0"
+	} else if len(firstSlice)-1 < pos {
+		return fmt.Sprintf("-%f %%", secondSlice[pos])
+	} else if len(secondSlice)-1 < pos {
+		return fmt.Sprintf("+%f %%", firstSlice[pos])
+	}
+
 	diff := firstSlice[pos] / secondSlice[pos] * hundredPercent
 
 	var formattedDiff string
@@ -118,7 +130,6 @@ func getParsedDiff(firstSlice []float64, secondSlice []float64, pos int) string 
 		diff = hundredPercent - diff
 		formattedDiff = fmt.Sprintf("-%f %%", diff)
 	} else {
-		diff = diff - hundredPercent
 		formattedDiff = fmt.Sprintf("+%f %%", diff)
 	}
 
